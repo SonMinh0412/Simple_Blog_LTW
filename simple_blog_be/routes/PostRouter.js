@@ -2,8 +2,10 @@ const express = require("express");
 const Post = require("../db/postModel");
 const router = express.Router();
 const Comment = require("../db/commentModel.js");
+const requireAuth = require("../middleware/requireAuth");
+
 //POST adding data
-router.post("/post", async (req, res) => {
+router.post("/post", requireAuth, async (req, res) => {
   const post = new Post(req.body);
   try {
     await post.save();
@@ -32,7 +34,7 @@ router.get("/posts/:slug", async (req, res) => {
 });
 
 //PATCH updating a post by slug
-router.patch("/posts/:slug", async (req, res) => {
+router.patch("/posts/:slug", requireAuth, async (req, res) => {
   try {
     const post = await Post.findOneAndUpdate(
       { slug: req.params.slug },
@@ -46,7 +48,7 @@ router.patch("/posts/:slug", async (req, res) => {
 });
 
 //DELETE delete a post
-router.delete("/posts/:slug", async (req, res) => {
+router.delete("/posts/:slug", requireAuth, async (req, res) => {
   try {
     const post = await Post.findOneAndDelete({ slug: req.params.slug });
     if (!post) {

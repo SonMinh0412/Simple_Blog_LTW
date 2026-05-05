@@ -7,10 +7,13 @@ export default function Stats({ user }) {
   useEffect(() => {
     async function fetchUsers() {
       try {
-        const res = await fetch("http://localhost:8080/api/users/stats");
+        const res = await fetch("http://localhost:8080/api/users/stats", {
+          credentials: "include",
+        });
         const result = await res.json();
         if (!res.ok) {
-          setMessage(result.massage || "Failed to load users");
+          setMessage(result.message || "Failed to load users");
+          return;
         }
         setUsers(result);
       } catch (error) {

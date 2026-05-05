@@ -13,6 +13,7 @@ export default function NewPost() {
     try {
       const res = await fetch("http://localhost:8080/api/post", {
         method: "POST",
+        credentials: "include",
         headers: {
           "Content-type": "application/json",
           Accept: "application/json",

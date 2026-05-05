@@ -1,7 +1,7 @@
 const express = require("express");
 const User = require("../db/userModel");
-
 const router = express.Router();
+const requireAuth = require("../middleware/requireAuth");
 
 //POST register
 router.post("/users/register", async (req, res) => {
@@ -16,7 +16,7 @@ router.post("/users/register", async (req, res) => {
 
     if (existingUser) {
       return res.status(409).send({
-        massage: "Username already exists",
+        message: "Username already exists",
       });
     }
     const user = new User({
@@ -63,7 +63,7 @@ router.post("/users/login", async (req, res) => {
 });
 
 //GET all stats
-router.get("/users/stats", async (req, res) => {
+router.get("/users/stats", requireAuth, async (req, res) => {
   try {
     const users = await User.find()
       .select("_id username")
@@ -96,7 +96,8 @@ router.post("/users/logout", (req, res) => {
     if (err) {
       res.status(500).send("Error logging out");
     } else {
-      res.redirect("/");
+      res.clearCookie("connect.sid");
+      res.status(200).send({ message: "Logout successful" });
     }
   });
 });

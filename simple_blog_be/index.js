@@ -25,7 +25,7 @@ app.use(
     saveUninitialized: false,
     cookie: {
       httpOnly: true,
-      maxAge: 60 * 300,
+      maxAge: 60 * 30 * 1000,
     },
   }),
 );

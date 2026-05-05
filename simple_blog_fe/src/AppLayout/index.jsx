@@ -5,7 +5,7 @@ import Error404 from "../pages/Error404";
 import Posts from "../pages/Posts";
 import PostLists from "../pages/Posts/PostLists";
 import PostDetail from "../pages/Posts/PostDetail";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Login from "../pages/Login";
 import Stats from "../pages/Stats";
 import NewPost from "../pages/NewPost";
@@ -15,10 +15,35 @@ import EditPost from "../pages/EditPost";
 
 function AppLayout() {
   const [user, setUser] = useState();
+  const [loadingAuth, setLoadingAuth] = useState(true);
+
+  useEffect(() => {
+    async function fetchMe() {
+      try {
+        const res = await fetch("http://localhost:8080/api/users/me", {
+          credentials: "include",
+        });
+        if (res.ok) {
+          const currentUser = await res.json();
+          setUser(currentUser);
+        }
+      } finally {
+        setLoadingAuth(false);
+      }
+    }
+    fetchMe();
+  }, []);
   const navigate = useNavigate();
-  function logOut() {
+  async function logOut() {
+    await fetch("http://localhost:8080/api/users/logout", {
+      method: "POST",
+      credentials: "include",
+    });
     setUser(null);
     navigate("/");
+  }
+  if (loadingAuth) {
+    return <p>Loading...</p>;
   }
   return (
     <>
