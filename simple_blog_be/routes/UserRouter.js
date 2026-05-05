@@ -48,12 +48,54 @@ router.post("/users/login", async (req, res) => {
         message: "Invalid username and password",
       });
     }
+    req.session.user = {
+      id: user._id,
+      username: user.username,
+    };
     res.status(200).send({ id: user._id, username: user.username });
   } catch (error) {
     res.status(500).send({
       message: "Login failed",
     });
   }
+});
+
+router.get("/users/stats", async (req, res) => {
+  try {
+    const users = await User.find()
+      .select("_id username")
+      .sort({ username: 1 })
+      .lean();
+    res.status(200).send(
+      users.map((user) => ({
+        id: user._id,
+        username: user.username,
+      })),
+    );
+  } catch (error) {
+    res.status(500).send({
+      message: "Failed to get users",
+    });
+  }
+});
+
+router.get("/users/me", (req, res) => {
+  if (!req.session.user) {
+    return res.status(401).send({
+      message: "Unauthorized",
+    });
+  }
+  res.status(200).send(req.session.user);
+});
+
+router.post("/users/logout", (req, res) => {
+  req.session.destroy((err) => {
+    if (err) {
+      res.status(500).send("Error logging out");
+    } else {
+      res.redirect("/");
+    }
+  });
 });
 
 module.exports = router;

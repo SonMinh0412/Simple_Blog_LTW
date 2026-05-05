@@ -64,11 +64,11 @@ function AppLayout() {
         <Route path="/" element={<Home />} />
         <Route path="/about" element={<About />} />
         <Route path="/posts" element={<Posts />}>
-          <Route index element={<PostLists />} />
+          <Route index element={<PostLists user = {user} />} />
           <Route path=":slug" element={<ProtectedRoute user = {user}><PostDetail /></ProtectedRoute>} />
         </Route>
         <Route path="/newpost" element={<ProtectedRoute user={user}><NewPost /></ProtectedRoute>} />
-        <Route path="/stats" element={<ProtectedRoute user={user}><Stats /></ProtectedRoute>} />
+        <Route path="/stats" element={<ProtectedRoute user={user}><Stats user={user} /></ProtectedRoute>} />
         <Route path="/login" element={<Login onLogin={setUser} />} />
         <Route path="/register" element= {<Register/>}/>
         <Route path="*" element={<Error404 />} />

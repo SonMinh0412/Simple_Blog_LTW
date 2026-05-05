@@ -16,9 +16,9 @@ const UserRouter = require("./routes/UserRouter.js");
 
 dbConnect();
 
+app.use(cors({ origin: "http://localhost:5173", credentials: true }));
 app.use(express.json());
-app.use("/api", PostRouter);
-app.use("/api", UserRouter);
+
 app.use(
   session({
     secret: "your_secret_key",
@@ -31,6 +31,8 @@ app.use(
   }),
 );
 
+app.use("/api", PostRouter);
+app.use("/api", UserRouter);
 //POST new post
 // app.post("/api/post", jsonParser, (req, res) => {
 //   const post = {

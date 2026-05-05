@@ -13,6 +13,7 @@ export default function Login({ onLogin }) {
     try {
       const res = await fetch("http://localhost:8080/api/users/login", {
         method: "POST",
+        credentials: "include",
         headers: {
           "Content-type": "application/json",
           Accept: "application/json",
@@ -20,6 +21,10 @@ export default function Login({ onLogin }) {
         body: JSON.stringify(creds),
       });
       const result = await res.json();
+      if (!res.ok) {
+        setMessage(result.message || "Login failed");
+        return;
+      }
       onLogin && onLogin(result);
       navigate("/posts");
     } catch (error) {

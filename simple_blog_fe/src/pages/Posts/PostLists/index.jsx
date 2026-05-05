@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { useState, useEffect } from "react";
-export default function PostLists() {
+export default function PostLists({ user }) {
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -22,6 +22,25 @@ export default function PostLists() {
     };
     fetchData();
   }, []);
+  async function handleDelete(slug) {
+    const confirmed = window.confirm("Delete this post ?");
+    if (!confirmed) return;
+    try {
+      const res = await fetch(`http://localhost:8080/api/posts/${slug}`, {
+        method: "DELETE",
+        credentials: "include",
+      });
+      if (!res.ok) {
+        throw new Error(`Delete failed. Status: ${res.status}`);
+      }
+      setPosts((currentPosts) =>
+        currentPosts.filter((post) => post.slug !== slug),
+      );
+    } catch (error) {
+      console.error("Error deleting post:", error);
+      setError("Xóa bài viết thất bại");
+    }
+  }
   return (
     <>
       {loading ? (
@@ -35,6 +54,15 @@ export default function PostLists() {
           {posts.map((d) => (
             <li key={d.slug}>
               <Link to={`/posts/${d.slug}`}>{d.title}</Link>
+              {user && (
+                <button
+                  type="button"
+                  onClick={() => handleDelete(d.slug)}
+                  style={{ marginLeft: 10 }}
+                >
+                  Delete
+                </button>
+              )}
             </li>
           ))}
         </ul>
