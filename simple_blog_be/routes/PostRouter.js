@@ -1,8 +1,9 @@
 const express = require("express");
 const Post = require("../db/postModel");
 const router = express.Router();
+
 //POST adding data
-router.post("post", async (req, res) => {
+router.post("/post", async (req, res) => {
   const post = new Post(req.body);
   try {
     await post.save();
@@ -21,7 +22,7 @@ router.get("/posts", async (req, res) => {
   }
 });
 // GET post by slug
-router.get("post/:slug", async (req, res) => {
+router.get("/posts/:slug", async (req, res) => {
   try {
     const post = await Post.findOne({ slug: req.params.slug });
     res.send(post);
@@ -31,10 +32,13 @@ router.get("post/:slug", async (req, res) => {
 });
 
 //PATCH updating a post by slug
-router.patch("/post/:slug", async (req, res) => {
+router.patch("/posts/:slug", async (req, res) => {
   try {
-    const post = await Post.findByIdAndUpdate(req.params.slug, req.body);
-    await post.save();
+    const post = await Post.findOneAndUpdate(
+      { slug: req.params.slug },
+      req.body,
+      { new: true, runValidators: true },
+    );
     res.send(post);
   } catch (error) {
     res.status(500).send({ error });
@@ -42,9 +46,9 @@ router.patch("/post/:slug", async (req, res) => {
 });
 
 //DELETE delete a post
-router.patch("/post/:slug", async (req, res) => {
+router.delete("/posts/:slug", async (req, res) => {
   try {
-    const post = await Post.findByIdAndDelete(req.params.slug);
+    const post = await Post.findOneAndDelete({ slug: req.params.slug });
     if (!post) {
       return res.status(404).send("Post wasn't found");
     }

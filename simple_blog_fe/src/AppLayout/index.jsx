@@ -10,6 +10,7 @@ import Login from "../pages/Login";
 import Stats from "../pages/Stats";
 import NewPost from "../pages/NewPost";
 import ProtectedRoute from "../ProtectedRoute";
+import Register from "../pages/Register";
 
 function AppLayout() {
   const [user, setUser] = useState();
@@ -52,6 +53,11 @@ function AppLayout() {
             Logout
           </span>
         )}
+        {!user && (
+          <NavLink to="/register" style={{ padding: 5 }}>
+            Register
+          </NavLink>
+        )}
       </nav>
       {/* prettier-ignore */}
       <Routes>
@@ -64,6 +70,7 @@ function AppLayout() {
         <Route path="/newpost" element={<ProtectedRoute user={user}><NewPost /></ProtectedRoute>} />
         <Route path="/stats" element={<ProtectedRoute user={user}><Stats /></ProtectedRoute>} />
         <Route path="/login" element={<Login onLogin={setUser} />} />
+        <Route path="/register" element= {<Register/>}/>
         <Route path="*" element={<Error404 />} />
       </Routes>
     </>

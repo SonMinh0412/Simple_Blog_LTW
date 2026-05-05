@@ -5,6 +5,7 @@ export default function NewPost() {
   const {
     register,
     handleSubmit,
+    reset,
     formState: { errors },
   } = useForm();
   const onSubmit = async (data) => {
@@ -18,7 +19,11 @@ export default function NewPost() {
         },
         body: post,
       });
-      if (res.ok) setNewPost("Post created successfully !");
+      if (!res.ok) {
+        throw new Error(`HTTP error! Status : ${res.status}`);
+      }
+      reset();
+      setNewPost("Post created successfully !");
     } catch (error) {
       console.log("Error creating data: ", error);
       setNewPost("Post created failed !");
@@ -28,15 +33,15 @@ export default function NewPost() {
     <form onSubmit={handleSubmit(onSubmit)}>
       <div style={{ padding: 10 }}>
         <span>Slug: </span>
-        <input type="text" {...register("slug", { require: true })} />
+        <input type="text" {...register("slug", { required: true })} />
         {errors.slug && <div style={{ color: "red" }}>Slug is required</div>}
         <br />
         <span>Title: </span>
-        <input type="text" {...register("title", { require: true })} />
+        <input type="text" {...register("title", { required: true })} />
         {errors.title && <div style={{ color: "red" }}>Title is required</div>}
         <br />
         <span>Description: </span>
-        <input type="text" {...register("description", { require: true })} />
+        <input type="text" {...register("description", { required: true })} />
         {errors.description && (
           <div style={{ color: "red" }}>Description is required</div>
         )}

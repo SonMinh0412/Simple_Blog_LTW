@@ -4,18 +4,21 @@ const app = express();
 const cors = require("cors");
 app.use(cors());
 
-const bodyParser = require("body-parser");
-const jsonParser = bodyParser.json();
-
-const BlogPosts = require("./data.js");
+app.use(express.json());
 
 const dbConnect = require("./db/dbConnect.js");
 
 const session = require("express-session");
 
+const PostRouter = require("./routes/PostRouter.js");
+
+const UserRouter = require("./routes/UserRouter.js");
+
 dbConnect();
+
 app.use(express.json());
 app.use("/api", PostRouter);
+app.use("/api", UserRouter);
 app.use(
   session({
     secret: "your_secret_key",
@@ -29,29 +32,29 @@ app.use(
 );
 
 //POST new post
-app.post("/api/post", jsonParser, (req, res) => {
-  const post = {
-    slug: req.body.slug,
-    title: req.body.title,
-    description: req.body.description,
-  };
-  BlogPosts.BlogPosts.push(post);
-  res.status(200).send({ msg: "Posted successful" });
-});
+// app.post("/api/post", jsonParser, (req, res) => {
+//   const post = {
+//     slug: req.body.slug,
+//     title: req.body.title,
+//     description: req.body.description,
+//   };
+//   BlogPosts.BlogPosts.push(post);
+//   res.status(200).send({ msg: "Posted successful" });
+// });
 
 //GET post list
-app.get("/api/posts", (req, res) => {
-  res.json(BlogPosts.BlogPosts);
-});
+// app.get("/api/posts", (req, res) => {
+//   res.json(BlogPosts.BlogPosts);
+// });
 
 //GET post
-app.get("/api/posts/:slug", (req, res) => {
-  const slug = req.params.slug;
-  const post = BlogPosts.BlogPosts.find((e) => e.slug === slug);
-  if (post) {
-    res.json(post);
-  } else res.status(404).send("NOT FOUND!");
-});
+// app.get("/api/posts/:slug", (req, res) => {
+//   const slug = req.params.slug;
+//   const post = BlogPosts.BlogPosts.find((e) => e.slug === slug);
+//   if (post) {
+//     res.json(post);
+//   } else res.status(404).send("NOT FOUND!");
+// });
 
 //Login Route - Stateful
 app.post("/login", (req, res) => {
