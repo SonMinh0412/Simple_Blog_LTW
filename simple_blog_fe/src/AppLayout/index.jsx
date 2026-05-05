@@ -11,6 +11,7 @@ import Stats from "../pages/Stats";
 import NewPost from "../pages/NewPost";
 import ProtectedRoute from "../ProtectedRoute";
 import Register from "../pages/Register";
+import EditPost from "../pages/EditPost";
 
 function AppLayout() {
   const [user, setUser] = useState();
@@ -64,8 +65,9 @@ function AppLayout() {
         <Route path="/" element={<Home />} />
         <Route path="/about" element={<About />} />
         <Route path="/posts" element={<Posts />}>
-          <Route index element={<PostLists user = {user} />} />
+          <Route index element={<PostLists />} />
           <Route path=":slug" element={<ProtectedRoute user = {user}><PostDetail /></ProtectedRoute>} />
+          <Route path=":slug/edit" element={<ProtectedRoute user={user}><EditPost /></ProtectedRoute>} />
         </Route>
         <Route path="/newpost" element={<ProtectedRoute user={user}><NewPost /></ProtectedRoute>} />
         <Route path="/stats" element={<ProtectedRoute user={user}><Stats user={user} /></ProtectedRoute>} />

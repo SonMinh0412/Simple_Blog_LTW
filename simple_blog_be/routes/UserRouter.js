@@ -3,6 +3,7 @@ const User = require("../db/userModel");
 
 const router = express.Router();
 
+//POST register
 router.post("/users/register", async (req, res) => {
   try {
     const { username, password } = req.body;
@@ -34,6 +35,7 @@ router.post("/users/register", async (req, res) => {
   }
 });
 
+//POST login
 router.post("/users/login", async (req, res) => {
   try {
     const { username, password } = req.body;
@@ -60,6 +62,7 @@ router.post("/users/login", async (req, res) => {
   }
 });
 
+//GET all stats
 router.get("/users/stats", async (req, res) => {
   try {
     const users = await User.find()

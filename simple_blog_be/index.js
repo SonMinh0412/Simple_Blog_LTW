@@ -2,7 +2,6 @@ const express = require("express");
 const app = express();
 
 const cors = require("cors");
-app.use(cors());
 
 app.use(express.json());
 
@@ -26,7 +25,7 @@ app.use(
     saveUninitialized: false,
     cookie: {
       httpOnly: true,
-      maxAge: 60 * 30,
+      maxAge: 60 * 300,
     },
   }),
 );
