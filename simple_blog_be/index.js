@@ -7,7 +7,7 @@ app.use(express.json());
 
 const dbConnect = require("./db/dbConnect.js");
 
-const session = require("express-session");
+// const session = require("express-session");
 
 const PostRouter = require("./routes/PostRouter.js");
 
@@ -15,20 +15,21 @@ const UserRouter = require("./routes/UserRouter.js");
 
 dbConnect();
 
-app.use(cors({ origin: "http://localhost:5173", credentials: true }));
+app.use(cors({ origin: "http://localhost:5173" }));
+//app.use(cors({ origin: "http://localhost:5173", credentials: true }));
 app.use(express.json());
 
-app.use(
-  session({
-    secret: "your_secret_key",
-    resave: false,
-    saveUninitialized: false,
-    cookie: {
-      httpOnly: true,
-      maxAge: 60 * 30 * 1000,
-    },
-  }),
-);
+// app.use(
+//   session({
+//     secret: "your_secret_key",
+//     resave: false,
+//     saveUninitialized: false,
+//     cookie: {
+//       httpOnly: true,
+//       maxAge: 60 * 30 * 1000,
+//     },
+//   }),
+// );
 
 app.use("/api", PostRouter);
 app.use("/api", UserRouter);

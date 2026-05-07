@@ -11,12 +11,14 @@ export default function NewPost() {
   const onSubmit = async (data) => {
     const post = JSON.stringify(data);
     try {
+      const token = localStorage.getItem("token");
       const res = await fetch("http://localhost:8080/api/post", {
         method: "POST",
-        credentials: "include",
+        // credentials: "include",
         headers: {
           "Content-type": "application/json",
           Accept: "application/json",
+          Authorization: `Bearer ${token}`,
         },
         body: post,
       });

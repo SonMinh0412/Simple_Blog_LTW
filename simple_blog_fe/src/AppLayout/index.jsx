@@ -20,8 +20,12 @@ function AppLayout() {
   useEffect(() => {
     async function fetchMe() {
       try {
+        const token = localStorage.getItem("token");
         const res = await fetch("http://localhost:8080/api/users/me", {
-          credentials: "include",
+          // credentials: "include",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
         });
         if (res.ok) {
           const currentUser = await res.json();
@@ -35,10 +39,7 @@ function AppLayout() {
   }, []);
   const navigate = useNavigate();
   async function logOut() {
-    await fetch("http://localhost:8080/api/users/logout", {
-      method: "POST",
-      credentials: "include",
-    });
+    localStorage.removeItem("token");
     setUser(null);
     navigate("/");
   }
@@ -91,7 +92,7 @@ function AppLayout() {
         <Route path="/about" element={<About />} />
         <Route path="/posts" element={<Posts />}>
           <Route index element={<PostLists />} />
-          <Route path=":slug" element={<ProtectedRoute user = {user}><PostDetail /></ProtectedRoute>} />
+          <Route path=":slug" element={<ProtectedRoute user = {user}><PostDetail user = {user} /></ProtectedRoute>} />
           <Route path=":slug/edit" element={<ProtectedRoute user={user}><EditPost /></ProtectedRoute>} />
         </Route>
         <Route path="/newpost" element={<ProtectedRoute user={user}><NewPost /></ProtectedRoute>} />

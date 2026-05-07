@@ -77,11 +77,11 @@ router.get("/posts/:slug/comments", async (req, res) => {
 });
 
 //POST comments
-router.post("/posts/:slug/comments", async (req, res) => {
+router.post("/posts/:slug/comments", requireAuth, async (req, res) => {
   try {
-    if (!req.session.user) {
-      return res.status(401).send({ message: "Unauthorized" });
-    }
+    // if (!req.session.user) {
+    //   return res.status(401).send({ message: "Unauthorized" });
+    // }
     const { content } = req.body;
     if (!content || !content.trim()) {
       return res.status(400).send({ message: "Comment is required" });
@@ -92,7 +92,8 @@ router.post("/posts/:slug/comments", async (req, res) => {
     }
     const comment = await Comment.create({
       postSlug: req.params.slug,
-      username: req.session.user.username,
+      username: req.user.username,
+      // username: req.session.user.username,
       content: content.trim(),
     });
     res.status(201).send(comment);
@@ -100,5 +101,61 @@ router.post("/posts/:slug/comments", async (req, res) => {
     res.status(500).send({ message: "Failed to create comment" });
   }
 });
+
+//PATCH comments
+router.patch(
+  "/posts/:slug/comments/:commentId",
+  requireAuth,
+  async (req, res) => {
+    try {
+      const { content } = req.body;
+      if (!content || !content.trim()) {
+        return res.status(400).send({ message: "Comment is required" });
+      }
+      const comment = await Comment.findOne({
+        _id: req.params.commentId,
+        postSlug: req.params.slug,
+      });
+      if (!comment) {
+        return res.status(404).send({ message: "Comment not found" });
+      }
+      if (comment.username !== req.user.username) {
+        return res
+          .status(403)
+          .send({ message: "You can only edit your own comment" });
+      }
+      comment.content = content.trim();
+      await comment.save();
+      res.status(200).send(comment);
+    } catch (error) {
+      res.status(500).send({ message: "Failed to update comment" });
+    }
+  },
+);
+
+router.delete(
+  "/posts/:slug/comments/:commentId",
+  requireAuth,
+  async (req, res) => {
+    try {
+      const comment = await Comment.findOne({
+        _id: req.params.commentId,
+        postSlug: req.params.slug,
+      });
+      if (!comment) {
+        return res.status(400).send({ message: "Comment Not Found" });
+      }
+      if (comment.username !== req.user.username) {
+        return res
+          .status(403)
+          .send({ message: "You can only delete your own comment" });
+      }
+      await Comment.deleteOne({ _id: comment._id });
+      res.status(204).send();
+    } catch (error) {
+      res.status(500).send({ messaeg: "Failed to delete comment" });
+    }
+  },
+);
 
 module.exports = router;

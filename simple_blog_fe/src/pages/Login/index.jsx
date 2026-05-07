@@ -13,7 +13,7 @@ export default function Login({ onLogin }) {
     try {
       const res = await fetch("http://localhost:8080/api/users/login", {
         method: "POST",
-        credentials: "include",
+        // credentials: "include",
         headers: {
           "Content-type": "application/json",
           Accept: "application/json",
@@ -25,7 +25,8 @@ export default function Login({ onLogin }) {
         setMessage(result.message || "Login failed");
         return;
       }
-      onLogin && onLogin(result);
+      localStorage.setItem("token", result.token);
+      onLogin && onLogin(result.user);
       navigate("/posts");
     } catch (error) {
       setMessage(error.message || "Login failed");

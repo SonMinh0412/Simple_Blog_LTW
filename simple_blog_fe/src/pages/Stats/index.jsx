@@ -7,8 +7,12 @@ export default function Stats({ user }) {
   useEffect(() => {
     async function fetchUsers() {
       try {
+        const token = localStorage.getItem("token");
         const res = await fetch("http://localhost:8080/api/users/stats", {
-          credentials: "include",
+          // credentials: "include",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
         });
         const result = await res.json();
         if (!res.ok) {

@@ -50,11 +50,27 @@ router.post("/users/login", async (req, res) => {
         message: "Invalid username and password",
       });
     }
-    req.session.user = {
-      id: user._id,
-      username: user.username,
-    };
-    res.status(200).send({ id: user._id, username: user.username });
+    const jwt = require("jsonwebtoken");
+    const token = jwt.sign(
+      {
+        id: user._id,
+        username: user.username,
+      },
+      process.env.JWT_SECRET,
+      { expiresIn: "1h" },
+    );
+    res.status(200).send({
+      token,
+      user: {
+        id: user._id,
+        username: user.username,
+      },
+    });
+    // req.session.user = {
+    //   id: user._id,
+    //   username: user.username,
+    // };
+    // res.status(200).send({ id: user._id, username: user.username });
   } catch (error) {
     res.status(500).send({
       message: "Login failed",
@@ -82,24 +98,20 @@ router.get("/users/stats", requireAuth, async (req, res) => {
   }
 });
 
-router.get("/users/me", (req, res) => {
-  if (!req.session.user) {
-    return res.status(401).send({
-      message: "Unauthorized",
-    });
-  }
-  res.status(200).send(req.session.user);
+router.get("/users/me", requireAuth, (req, res) => {
+  res.status(200).send(req.user);
 });
 
 router.post("/users/logout", (req, res) => {
-  req.session.destroy((err) => {
-    if (err) {
-      res.status(500).send("Error logging out");
-    } else {
-      res.clearCookie("connect.sid");
-      res.status(200).send({ message: "Logout successful" });
-    }
-  });
+  // req.session.destroy((err) => {
+  //   if (err) {
+  //     res.status(500).send("Error logging out");
+  //   } else {
+  //     res.clearCookie("connect.sid");
+  //     res.status(200).send({ message: "Logout successful" });
+  //   }
+  // });
+  res.status(200).send({ message: "Logout successful" });
 });
 
 module.exports = router;

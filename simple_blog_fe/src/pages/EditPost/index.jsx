@@ -13,7 +13,12 @@ export default function EditPost() {
   useEffect(() => {
     async function fetchPost() {
       try {
-        const res = await fetch(`http://localhost:8080/api/posts/${slug}`);
+        const token = localStorage.getItem("token");
+        const res = await fetch(`http://localhost:8080/api/posts/${slug}`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
         const data = await res.json();
         setForm({
           title: data.title,
@@ -30,12 +35,14 @@ export default function EditPost() {
   async function handleSubmit(e) {
     e.preventDefault();
     try {
+      const token = localStorage.getItem("token");
       const res = await fetch(`http://localhost:8080/api/posts/${slug}`, {
         method: "PATCH",
-        credentials: "include",
+        // credentials: "include",
         headers: {
           "Content-type": "application/json",
           Accept: "application/json",
+          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify(form),
       });
